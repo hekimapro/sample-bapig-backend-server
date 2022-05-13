@@ -1,5 +1,5 @@
 /* require dependencies */
-import express, { Application } from 'express'
+import express, { Application, Request, Response } from 'express'
 import cors from 'cors'
 import helmet from 'helmet'
 import bapig from 'bapig'
@@ -30,6 +30,14 @@ const databaseOptions: object = {
 const databaseName: string = 'demo'
 const databaseConnectionString: string = `mongodb://localhost:27017/${databaseName}`
 
+/* backend home page handling */
+server.get('/', (request: Request, response: Response) => {
+    try {
+        response.send(`<h1>Sample BAPIG Backend Server</h1>`)
+    } catch (error) {
+        response.json({ success: false, message: error.message })
+    }
+})
 
 /* database connection */
 mongoose
@@ -46,6 +54,7 @@ mongoose
         require('./configurations')
     })
     .catch((error: Error) => console.log(`Database connection error: ${error.message}`))
+
 
 // application programming interfcae (API's) with bapig
 server.use('', bapig)
