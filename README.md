@@ -56,4 +56,3 @@ To start your production run the following command on your terminal. NOTE: **Aft
 The production server will start (running) on: 
 
 `http://localhost:1000`
-
