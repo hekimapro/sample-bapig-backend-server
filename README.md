@@ -1,5 +1,7 @@
 # Sample BAPIG Backend Server 
 
+[BAPIG Documentation](https://www.npmjs.com/package/bapig)
+
 ### Requirements 
 
 1. [Node.JS >= v12](https://nodejs.org/en/)
