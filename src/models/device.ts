@@ -1,7 +1,8 @@
 import { Schema, model } from 'mongoose'
+import { device } from '../interface'
 
 /* creating device collection schema */
-const schema = new Schema<any>({
+const schema = new Schema<device>({
     name: {
         type: String,
         required: true
@@ -27,7 +28,7 @@ schema.index({ updatedAt: -1 }, { background: true })
 schema.plugin(require('mongoose-autopopulate'))
 
 /* device model */
-const device = model<any>('device', schema)
+const device = model<device>('device', schema)
 
 // export device model for global accessibility
 export default device

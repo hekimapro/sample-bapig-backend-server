@@ -1,7 +1,8 @@
 import { Schema, model } from 'mongoose'
+import { user } from '../interface'
 
 /* creating user collection schema */
-const schema = new Schema<any>({
+const schema = new Schema<user>({
     username: {
         type: String,
         required: true,
@@ -23,6 +24,6 @@ schema.index({ updatedAt: -1 }, { background: true })
 schema.index({ username: -1 }, { background: true })
 
 /* creating user  model */
-const user = model<any>('user', schema)
+const user = model<user>('user', schema)
 
 export default user
