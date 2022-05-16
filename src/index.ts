@@ -20,41 +20,48 @@ server.use(express.static(path.join(__dirname, '../public')))
 /* server information */
 const port: number = 1000
 
-/* database information */
-const databaseOptions: object = {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useCreateIndex: true,
-    useFindAndModify: false
-}
-const databaseName: string = 'demo'
-const databaseConnectionString: string = `mongodb://localhost:27017/${databaseName}`
-
 /* backend home page handling */
 server.get('/', (request: Request, response: Response) => {
     try {
         response.send(`<h1>Sample BAPIG Backend Server</h1>`)
     } catch (error) {
-        response.json({ success: false, message: error.message })
+        response.send(`<h1> Error: ${error.message}</h1>`)
     }
 })
 
-/* database connection */
-mongoose
-    .connect(databaseConnectionString, databaseOptions)
-    .then((databaseConnected) => {
-        if (databaseConnected) 
+/* database connection with retry every 5 seconds*/
+async function connectWithRetry(): Promise<void> {
+    try {
+        /* database information */
+        const databaseOptions: object = {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            useCreateIndex: true,
+            useFindAndModify: false
+        }
+        const databaseName: string = 'demo'
+        const databaseConnectionString: string = `mongodb://localhost:27017/${databaseName}`
+        const databaseConnected = await mongoose.connect(databaseConnectionString, databaseOptions)
+
+        /* verify database connection */
+        if (databaseConnected) {
             /* start server when database has been connected */
             server.listen(port, () => console.log(`${databaseName} database has been connected and development server is running on http://localhost:${port}`))
-        
-        else 
-            console.log('Database failed to connect')
-        
-        // create database collections
-        require('./configurations')
-    })
-    .catch((error: Error) => console.log(`Database connection error: ${error.message}`))
+        }
+        else
+            setTimeout(connectWithRetry, 5000)
 
+    } catch (error) {
+        if (error instanceof Error)
+            console.error(error.message)
+        else
+            console.error(error)
+        setTimeout(connectWithRetry, 5000)
+    }
+}
+
+/* try to connect the database */
+connectWithRetry()
 
 // application programming interfcae (API's) with bapig
 server.use('', bapig)
