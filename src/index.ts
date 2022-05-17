@@ -5,6 +5,7 @@ import helmet from 'helmet'
 import bapig from 'bapig'
 import mongoose from 'mongoose'
 import path from 'path'
+import morgan from 'morgan'
 
 /* express initalization */
 const server: Application = express()
@@ -13,6 +14,7 @@ const server: Application = express()
 server.use(cors())
 server.use(helmet())
 server.use(express.json())
+server.use(morgan('dev'))
 
 /* serving static files */
 server.use(express.static(path.join(__dirname, '../public')))
