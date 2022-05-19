@@ -2,7 +2,7 @@
 import express, { Application, Request, Response } from 'express'
 import cors from 'cors'
 import helmet from 'helmet'
-import bapig from 'bapig'
+import { router } from 'bapig'
 import mongoose from 'mongoose'
 import path from 'path'
 import morgan from 'morgan'
@@ -66,6 +66,6 @@ async function connectWithRetry(): Promise<void> {
 connectWithRetry()
 
 // application programming interfcae (API's) with bapig
-server.use('', bapig)
+server.use('', router)
 
 /* Your other Routes */
