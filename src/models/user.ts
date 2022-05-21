@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose'
 import { user } from '../interface'
 
-/* creating user collection schema */
+/* user schema design */
 const schema = new Schema<user>({
     username: {
         type: String,
@@ -18,12 +18,13 @@ const schema = new Schema<user>({
     timestamps: true
 })
 
-/* user schema indexing, boost query performance */
+/* user schema indexing, improves query performance ** applied to fields that are not unique */
 schema.index({ createdAt: -1 }, { background: true })
 schema.index({ updatedAt: -1 }, { background: true })
 schema.index({ username: -1 }, { background: true })
 
-/* creating user  model */
+/* user schema */
 const user = model<user>('user', schema)
 
+/* export user model for global accessibility */
 export default user
