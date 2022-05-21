@@ -41,7 +41,7 @@ async function connectWithRetry(): Promise<void> {
             useCreateIndex: true,
             useFindAndModify: false
         }
-        const databaseName: string = 'demo'
+        const databaseName: string = 'bapig_test'
         const databaseConnectionString: string = `mongodb://localhost:27017/${databaseName}`
         const databaseConnected = await mongoose.connect(databaseConnectionString, databaseOptions)
 
