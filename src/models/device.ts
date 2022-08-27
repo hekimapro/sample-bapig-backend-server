@@ -5,6 +5,7 @@ import { device } from '../interface'
 const schema = new Schema<device>({
     name: {
         type: String,
+        index: true,
         required: true
     },
 
@@ -12,6 +13,7 @@ const schema = new Schema<device>({
     user: {
         type: Schema.Types.ObjectId,
         ref: 'user',
+        index: true,
         required: true,
         autopopulate: { maxDepth: 1 }
     }
@@ -20,9 +22,7 @@ const schema = new Schema<device>({
     timestamps: true
 })
 
-/* device schema indexing, improves query performance ** applied to field that are not unique */
-schema.index({ name: -1 }, { background: true })
-schema.index({ user: -1 }, { background: true })
+/* schema timestamps indexing */
 schema.index({ createdAt: -1 }, { background: true })
 schema.index({ updatedAt: -1 }, { background: true })
 

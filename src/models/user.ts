@@ -3,8 +3,10 @@ import { user } from '../interface'
 
 /* user schema design */
 const schema = new Schema<user>({
+    
     username: {
         type: String,
+        index: true,
         required: true,
     },
 
@@ -12,16 +14,20 @@ const schema = new Schema<user>({
         type: String,
         required: true,
         unique: true
+    },
+
+    password: {
+        type: String,
+        default: null
     }
 
 }, {
     timestamps: true
 })
 
-/* user schema indexing, improves query performance ** applied to fields that are not unique */
+/* schema timestamp indexing */
 schema.index({ createdAt: -1 }, { background: true })
 schema.index({ updatedAt: -1 }, { background: true })
-schema.index({ username: -1 }, { background: true })
 
 /* user schema */
 const user = model<user>('user', schema)

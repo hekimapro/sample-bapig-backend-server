@@ -6,49 +6,59 @@ import { router } from 'bapig'
 import mongoose from 'mongoose'
 import path from 'path'
 import morgan from 'morgan'
+import http from "http"
 
 /* express initalization */
-const server: Application = express()
+const application: Application = express()
 
 /* express middleware */
-server.use(cors())
-server.use(helmet())
-server.use(express.json())
-server.use(morgan('dev'))
+application.use(cors())
+application.use(helmet())
+application.use(express.json())
+application.use(morgan('dev'))
+application.use('/api', router)
 
 /* serving static files */
-server.use(express.static(path.join(__dirname, '../public')))
+application.use(express.static(path.join(__dirname, '../public')))
 
-/* server information */
+/* application information */
 const port: number = 1000
 
 /* backend home page handling */
-server.get('/', (request: Request, response: Response) => {
+application.get('/', (_request: Request, response: Response) => {
     try {
-        response.send(`<h1>Sample BAPIG Backend Server</h1>`)
+        response.send(`<h1>Sample BAPIG Backend application</h1>`)
     } catch (error) {
         response.send(`<h1> Error: ${error.message}</h1>`)
     }
 })
 
+const server = http.createServer(application)
+
+const io = require('socket.io')(server, {
+    cors: { origin: "*" }
+})
+
+io.on("connection", (socket: any) => {
+    console.log("Socket: user has connected");
+    socket.on('disconnect', () => {
+        console.log("a user has disconnected")
+    })
+
+})
+
+
 /* database connection with retry every 5 seconds*/
 async function connectWithRetry(): Promise<void> {
     try {
-        /* database information */
-        const databaseOptions: object = {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-            useCreateIndex: true,
-            useFindAndModify: false
-        }
         const databaseName: string = 'bapig_test'
         const databaseConnectionString: string = `mongodb://localhost:27017/${databaseName}`
-        const databaseConnected = await mongoose.connect(databaseConnectionString, databaseOptions)
+        const databaseConnected = await mongoose.connect(databaseConnectionString)
 
         /* verify database connection */
         if (databaseConnected) {
-            /* start server when database has been connected */
-            server.listen(port, () => console.log(`${databaseName} database has been connected and development server is running on http://localhost:${port}`))
+            /* start application when database has been connected */
+            server.listen(port, () => console.log(`${databaseName} database has been connected and development application is running on http://localhost:${port}`))
         }
         else
             setTimeout(connectWithRetry, 5000)
@@ -65,7 +75,7 @@ async function connectWithRetry(): Promise<void> {
 /* try to connect the database */
 connectWithRetry()
 
-// application programming interfcae (API's) with bapig
-server.use('', router)
+export default io
 
-/* Your other Routes */
+
+

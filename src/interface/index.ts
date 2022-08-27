@@ -5,10 +5,11 @@ import { Schema, Document} from 'mongoose'
 export interface user extends Document {
     username: string
     phone_number: string
+    password: string
 }
 
 /* creating mongoose device interface */
 export interface device extends Document {
-    name: string 
+    name: string
     user: Schema.Types.ObjectId
 }

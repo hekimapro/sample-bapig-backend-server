@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"
+        integrity="sha384-7EyYLQZgWBi67fBtVxw60/OWl1kjsfrPFcaU0pp0nAh+i8FD068QogUvg85Ewy1k" crossorigin="anonymous">
+        </script>
+</head>
+<body>
+
+    <h3>BAPIG Realtime Backend</h3>
+    <script>
+        const socket = io.connect('http://localhost:1000')
+
+        socket.on("connect", () => {
+            console.log("Socket connected")
+        })
+
+        socket.on('user-update', (user) => {
+            console.log(user)
+        })
+
+    </script>
+</body>
+</html>
