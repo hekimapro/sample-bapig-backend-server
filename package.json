@@ -4,7 +4,7 @@
   "description": "Backend API generator Sample Project",
   "main": "index.js",
   "dependencies": {
-    "bapig": "^0.6.3-realtime",
+    "bapig": "^0.8.2",
     "cors": "^2.8.5",
     "express": "^4.18.0",
     "helmet": "^5.0.2",
@@ -22,7 +22,7 @@
     "@types/socket.io": "^3.0.2"
   },
   "scripts": {
-    "dev": "sudo nodemon src/index.ts",
+    "dev": "nodemon src/index.ts",
     "build": "tsc -p .",
     "prod": "nodemon dist/index.js"
   },

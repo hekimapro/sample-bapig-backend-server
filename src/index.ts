@@ -52,7 +52,7 @@ io.on("connection", (socket: any) => {
 async function connectWithRetry(): Promise<void> {
     try {
         const databaseName: string = 'bapig_test'
-        const databaseConnectionString: string = `mongodb://localhost:27017/${databaseName}`
+        const databaseConnectionString: string = `mongodb://127.0.0.1:27017/${databaseName}`
         const databaseConnected = await mongoose.connect(databaseConnectionString)
 
         /* verify database connection */
@@ -61,14 +61,14 @@ async function connectWithRetry(): Promise<void> {
             server.listen(port, () => console.log(`${databaseName} database has been connected and development application is running on http://localhost:${port}`))
         }
         else
-            setTimeout(connectWithRetry, 5000)
+            setInterval(connectWithRetry, 5000)
 
     } catch (error) {
         if (error instanceof Error)
             console.error(error.message)
         else
             console.error(error)
-        setTimeout(connectWithRetry, 5000)
+        setInterval(connectWithRetry, 5000)
     }
 }
 
