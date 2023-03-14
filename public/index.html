@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,20 +10,89 @@
         integrity="sha384-7EyYLQZgWBi67fBtVxw60/OWl1kjsfrPFcaU0pp0nAh+i8FD068QogUvg85Ewy1k" crossorigin="anonymous">
         </script>
 </head>
+
 <body>
 
     <h3>BAPIG Realtime Backend</h3>
-    <script>
-        const socket = io.connect('http://localhost:1000')
+    <p id="status">Real-time Connection Status: <span>No Connection</span></p>
 
+    <h3>Multiple Images upload Test</h3>
+
+    <form action="#">
+        <input type="file" multiple />
+        <button type="submit">Upload</button>
+    </form>
+
+    <script>
+
+        // server url
+        const serverURL = "http://127.0.0.1:1000"
+
+        // real-time connection
+        const socket = io.connect(serverURL)
+
+        // on connection
         socket.on("connect", () => {
+            const span = document.querySelector("span")
+            span.innerText = "CONNECTED"
+            span.style.color = "#1565C0"
             console.log("Socket connected")
         })
 
+        // sample listening event
         socket.on('user-update', (user) => {
             console.log(user)
         })
 
+        // form selection and input selection
+        const form = document.querySelector("form")
+        const input = document.querySelector("input")
+
+        // add submission event on form
+        form.addEventListener("submit", uploadFiles)
+
+        // handling files upload
+        async function uploadFiles(e) {
+            try {
+
+                // prevent form default submission
+                event.preventDefault()
+
+                // get selected files from input
+                const files = input.files
+
+                // checking if file is not a falsy value and has atleast 2 elemets
+                if (files && files.length > 1) {
+
+                    // creating a form data instance
+                    const formData = new FormData()
+
+                    // looping over all files and appending to form data
+                    for (let i = 0; i < files.length; i += 1)
+                        formData.append("files", files[i])
+
+                    // appending body to form data
+                    formData.append("body", JSON.stringify({
+                        folderName: "files"
+                    }))
+
+                    const response = await (await fetch(`${serverURL}/api/upload-files`, {
+                        mode: "cors",
+                        method: "POST",
+                        body: formData
+                    })).json()
+
+                    console.log(response)
+                }
+                else
+                    console.log("Choose atleast 2 images")
+
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
     </script>
 </body>
+
 </html>

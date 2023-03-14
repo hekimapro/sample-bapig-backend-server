@@ -7,6 +7,7 @@ import mongoose from 'mongoose'
 import path from 'path'
 import morgan from 'morgan'
 import http from "http"
+import fileUpload from "express-fileupload"
 
 /* express initalization */
 const application: Application = express()
@@ -16,6 +17,7 @@ application.use(cors())
 application.use(helmet())
 application.use(express.json())
 application.use(morgan('dev'))
+application.use(fileUpload())
 application.use('/api', router)
 
 /* serving static files */
