@@ -2,7 +2,7 @@
 import express, { Application, Request, Response } from 'express'
 import cors from 'cors'
 import helmet from 'helmet'
-import { router } from 'bapig'
+import { router } from "bapig"
 import mongoose from 'mongoose'
 import path from 'path'
 import morgan from 'morgan'
@@ -49,7 +49,6 @@ io.on("connection", (socket: any) => {
 
 })
 
-
 /* database connection with retry every 5 seconds*/
 async function connectWithRetry(): Promise<void> {
     try {
@@ -78,6 +77,5 @@ async function connectWithRetry(): Promise<void> {
 connectWithRetry()
 
 export default io
-
 
 

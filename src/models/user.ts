@@ -3,7 +3,7 @@ import { user } from '../interface'
 
 /* user schema design */
 const schema = new Schema<user>({
-    
+
     username: {
         type: String,
         index: true,
