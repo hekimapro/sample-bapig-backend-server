@@ -1,13 +1,12 @@
 /* require dependencies */
-import express, { Application, Request, Response } from 'express'
+import http from "http"
 import cors from 'cors'
 import helmet from 'helmet'
-import { router } from "bapig"
-import mongoose from 'mongoose'
-import path from 'path'
 import morgan from 'morgan'
-import http from "http"
+import mongoose from 'mongoose'
+import { router, helpers } from "bapig"
 import fileUpload from "express-fileupload"
+import express, { Application } from 'express'
 
 /* express initalization */
 const application: Application = express()
@@ -21,30 +20,28 @@ application.use(fileUpload())
 application.use('/api', router)
 
 /* serving static files */
-application.use(express.static(path.join(__dirname, '../public')))
+application.use(express.static(helpers.staticFilesDirectory))
 
 /* application information */
 const port: number = 1000
 
-/* backend home page handling */
-application.get('/', (_request: Request, response: Response) => {
-    try {
-        response.send(`<h1>Sample BAPIG Backend application</h1>`)
-    } catch (error) {
-        response.send(`<h1> Error: ${error.message}</h1>`)
-    }
-})
+// backend server
+const server: http.Server = http.createServer(application)
 
-const server = http.createServer(application)
-
+// socket io connection
 const io = require('socket.io')(server, {
     cors: { origin: "*" }
 })
 
+// listening for connection
 io.on("connection", (socket: any) => {
-    console.log("Socket: user has connected");
+
+    // when a user connectes
+    console.log("Socket: A user has connected")
+
+    // when a user disconnect
     socket.on('disconnect', () => {
-        console.log("a user has disconnected")
+        console.log("A user has disconnected")
     })
 
 })
@@ -61,14 +58,13 @@ async function connectWithRetry(): Promise<void> {
             /* start application when database has been connected */
             server.listen(port, () => console.log(`${databaseName} database has been connected and development application is running on http://localhost:${port}`))
         }
-        else
+        else {
+            console.log(`Database connection failed`)
             setInterval(connectWithRetry, 5000)
+        }
 
     } catch (error) {
-        if (error instanceof Error)
-            console.error(error.message)
-        else
-            console.error(error)
+        console.error((error as Error).message)
         setInterval(connectWithRetry, 5000)
     }
 }
@@ -77,5 +73,3 @@ async function connectWithRetry(): Promise<void> {
 connectWithRetry()
 
 export default io
-
-
