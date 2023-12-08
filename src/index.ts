@@ -5,7 +5,7 @@ import * as bapig from "bapig";
 import { Socket } from "socket.io";
 
 // initializing express
-const application: any = express();
+const application: Application = express();
 
 // express middleware
 application.disable("x-powered-by");
