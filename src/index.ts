@@ -1,75 +1,28 @@
-/* require dependencies */
-import http from "http"
-import cors from 'cors'
-import helmet from 'helmet'
-import morgan from 'morgan'
-import mongoose from 'mongoose'
-import { router, helpers } from "bapig"
-import fileUpload from "express-fileupload"
-import express, { Application } from 'express'
+// dependencies
+import cors from "cors";
+import express, { Application } from "express";
+import * as bapig from "bapig";
+import { Socket } from "socket.io";
 
-/* express initalization */
-const application: Application = express()
+// initializing express
+const application: any = express();
 
-/* express middleware */
-application.use(cors())
-application.use(helmet())
-application.use(express.json())
-application.use(morgan('dev'))
-application.use(fileUpload())
-application.use('/api', router)
+// express middleware
+application.disable("x-powered-by");
+application.use(cors({ origin: "*" }));
+application.use(express.json({ limit: "100mb" }));
+application.use(express.static(bapig.helpers.staticFilesDirectory));
 
-/* serving static files */
-application.use(express.static(helpers.staticFilesDirectory))
+// API routes
+application.use("/api", bapig.router);
 
-/* application information */
-const port: number = 1000
+// starting server
+bapig.startServer(application);
 
-// backend server
-const server: http.Server = http.createServer(application)
+// socket io
+bapig.io.on("connection", (socket: Socket) => {
+    socket.on("message", (message: any) => {
+        console.log(message);
+    });
+});
 
-// socket io connection
-const io = require('socket.io')(server, {
-    cors: { origin: "*" }
-})
-
-// listening for connection
-io.on("connection", (socket: any) => {
-
-    // when a user connectes
-    console.log("Socket: A user has connected")
-
-    // when a user disconnect
-    socket.on('disconnect', () => {
-        console.log("A user has disconnected")
-    })
-
-})
-
-/* database connection with retry every 5 seconds*/
-async function connectWithRetry(): Promise<void> {
-    try {
-        const databaseName: string = 'bapig_test'
-        const databaseConnectionString: string = `mongodb://127.0.0.1:27017/${databaseName}`
-        const databaseConnected = await mongoose.connect(databaseConnectionString)
-
-        /* verify database connection */
-        if (databaseConnected) {
-            /* start application when database has been connected */
-            server.listen(port, () => console.log(`${databaseName} database has been connected and development application is running on http://localhost:${port}`))
-        }
-        else {
-            console.log(`Database connection failed`)
-            setInterval(connectWithRetry, 5000)
-        }
-
-    } catch (error) {
-        console.error((error as Error).message)
-        setInterval(connectWithRetry, 5000)
-    }
-}
-
-/* try to connect the database */
-connectWithRetry()
-
-export default io
