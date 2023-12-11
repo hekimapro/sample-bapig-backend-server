@@ -26,7 +26,7 @@
     <script>
 
         // server url
-        const serverURL = "http://127.0.0.1:1000"
+        const serverURL = "http://127.0.0.1:8080"
 
         // real-time connection
         const socket = io.connect(serverURL)
@@ -41,6 +41,10 @@
 
         // sample listening event
         socket.on('user-update', (user) => {
+            console.log(user)
+        })
+
+        socket.on('user-create', (user) => {
             console.log(user)
         })
 
@@ -62,7 +66,7 @@
                 const files = input.files
 
                 // checking if file is not a falsy value and has atleast 2 elemets
-                if (files && files.length > 1) {
+                // if (files && files.length > 1) {
 
                     // creating a form data instance
                     const formData = new FormData()
@@ -83,9 +87,9 @@
                     })).json()
 
                     console.log(response)
-                }
-                else
-                    console.log("Choose atleast 2 images")
+                // }
+                // else
+                    // console.log("Choose atleast 2 images")
 
             } catch (error) {
                 console.log(error)

@@ -1,5 +1,7 @@
-import { Schema, model } from 'mongoose'
 import { device } from '../interface'
+import { mongoose } from "bapig"
+
+const { Schema, model } = mongoose
 
 /* device schema design */
 const schema = new Schema<device>({
